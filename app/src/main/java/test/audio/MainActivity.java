@@ -14,6 +14,7 @@ import java.io.IOException;
 public class MainActivity extends Activity
 {
     private String mFileName;
+    private SoundPoolFun _pool;
 
     private MediaRecorder mRecorder = null;
     private MediaPlayer   mPlayer = null;
@@ -21,12 +22,12 @@ public class MainActivity extends Activity
     private boolean mRecording = false;
     private boolean mPlaying = false;
 
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         mFileName =  getApplicationContext().getDir("Speeches", Context.MODE_PRIVATE)+"/testAudio.3gp";
-
     }
 
     public void onRecord(View v) {
@@ -70,6 +71,7 @@ public class MainActivity extends Activity
         mRecorder.stop();
         mRecorder.release();
         mRecorder = null;
+        _pool = new SoundPoolFun(mFileName);
     }
 
     private void startPlaying() {
@@ -91,4 +93,24 @@ public class MainActivity extends Activity
         mPlayer = null;
     }
 
+
+    public void onPoolPlayer(View v) {
+        _pool.play();
+    }
+
+    public void onPoolPause(View v) {
+        _pool.pause();
+    }
+
+    public void onPoolStop(View v) {
+        _pool.stop();
+    }
+
+    public void onVolUp(View v) {
+
+    }
+
+    public void onVolDown(View v) {
+
+    }
 }
