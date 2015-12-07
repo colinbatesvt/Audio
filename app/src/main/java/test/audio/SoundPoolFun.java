@@ -3,13 +3,14 @@ package test.audio;
 import android.media.SoundPool;
 
 import java.io.File;
+import java.util.List;
 
 /**
  * Created by chris_000 on 12/5/2015.
  */
 public class SoundPoolFun {
     private SoundPool _soundPool;
-    private String _filePath;
+    private List<Integer> _playings;
     private int[] _soundIDs;
     private boolean _paused;
 
@@ -21,23 +22,29 @@ public class SoundPoolFun {
     }
 
     public void play() {
-        _soundPool.play(_soundIDs[0], 1, 1, 1, 0, (float)0.5);
+       int result = _soundPool.play(_soundIDs[0], 1, 1, 1, 0, (float)0.5);
+        _playings.add(result);
     }
 
+
+
     public void pause() {
-        if (!_paused) {
-            _soundPool.pause(_soundIDs[0]);
+        if (!_paused && !_playings.isEmpty()) {
+            _soundPool.autoPause();
             _paused = true;
         }
         else {
-            _soundPool.resume(_soundIDs[0]);
+            _soundPool.autoResume();
             _paused = false;
         }
 
     }
 
     public void stop() {
-        _soundPool.stop(_soundIDs[0]);
+        for( int i : _playings) {
+            _soundPool.stop(_playings.get(i));
+            _playings.remove(_playings.get(i));
+        }
     }
 
     public void allDone() {
