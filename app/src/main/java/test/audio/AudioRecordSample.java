@@ -1,5 +1,6 @@
 package test.audio;
 
+import android.media.AudioAttributes;
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioRecord;
@@ -34,7 +35,7 @@ public class AudioRecordSample {
     {
         //find a usable sample rate
         for (int rate : mSampleRates) {
-            Log.d("DEBUG", "Attempting rate " + rate + "Hz, bits: ");
+            Log.d("DEBUG", "Attempting rate " + rate + "Hz");
             int bufferSize = AudioRecord.getMinBufferSize(rate, RECORDER_CHANNELS, RECORDER_AUDIO_ENCODING);
 
             if (bufferSize != AudioRecord.ERROR_BAD_VALUE) {
@@ -45,6 +46,8 @@ public class AudioRecordSample {
                     return;
                 }
             }
+
+            mRecorder = null;
         }
     }
 
@@ -123,8 +126,16 @@ public class AudioRecordSample {
         int bufferSize = android.media.AudioTrack.getMinBufferSize(mRecorder.getSampleRate(), AudioFormat.CHANNEL_OUT_MONO,
                                                                 AudioFormat.ENCODING_PCM_16BIT);
 
-        AudioTrack audioPlayer = new AudioTrack(AudioManager.STREAM_MUSIC, mRecorder.getSampleRate(), AudioFormat.CHANNEL_OUT_MONO,
-                AudioFormat.ENCODING_PCM_16BIT, bufferSize, AudioTrack.MODE_STREAM, 12345);
+
+        AudioTrack audioPlayer = new AudioTrack(
+                new AudioAttributes.Builder()
+                        .setUsage(AudioAttributes.USAGE_MEDIA)
+                        .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                        .build(),
+                new AudioFormat.Builder()
+                        .setEncoding(AudioFormat.ENCODING_PCM_16BIT)
+                        .setSampleRate(mRecorder.getSampleRate()).build()
+                , bufferSize, AudioTrack.MODE_STREAM, 12345);
 
         int count = 1024; // 1 kb
         //Reading the file..
